@@ -3,6 +3,7 @@ import { openModal, setAction, setDetailsData, setWidth } from '../../context/Sl
 import { GrView } from 'react-icons/gr'
 import clientAxios from '../../config/clientAxios'
 import { useEffect, useState } from 'react'
+import '../Supply/Supply.css';
 
 function DetailsSupply () {
   const [loading, setLoading] = useState(true)
@@ -28,21 +29,54 @@ function DetailsSupply () {
       })
   }, [])
 
+// Función para dividir el texto en líneas si es demasiado largo
+const formatText = (text) => {
+  // Define la longitud máxima de caracteres por línea
+  const maxLengthPerLine = 30; // Ajusta según tus necesidades
+
+  if (text.length > maxLengthPerLine) {
+    // Divide el texto en líneas con un máximo de caracteres por línea
+    const lines = [];
+    let currentIndex = 0;
+
+    while (currentIndex < text.length) {
+      lines.push(text.slice(currentIndex, currentIndex + maxLengthPerLine));
+      currentIndex += maxLengthPerLine;
+    }
+
+    return lines.join('\n'); // Combina las líneas con saltos de línea
+  }
+
+  return text; // Devuelve el texto original si no es demasiado largo
+};
+
   if (loading) {
     return <div>Cargando...</div>
   }
 
   return (
     <>
-
+    <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+          crossorigin="anonymous"
+        ></link>
+  
     <p><b>Nombre insumo:</b> {name}</p>
-      <p><b>Indicadores de peligro insumo:</b> {dangerIndicators}</p>
-      <p><b>Instrucciones:</b> {useInstructions}</p>
-      <p><b>Consejos:</b> {advices}</p>
+      
+    <p><b>Indicadores de peligro insumo:</b></p>
+      <p>{formatText(dangerIndicators)}</p>
+
+      <p><b>Instrucciones:</b></p>
+      <p>{formatText(useInstructions)}</p>
+
+      <p><b>Consejos:</b></p>
+      <p>{formatText(advices)}</p>
       <p><b>Tipo insumo:</b> {supplyType === 1 ? 'Devolutivo' : 'Consumible'}</p>
       <p><b>Tipo peligrosidad:</b> {sortingWord === 1 ? 'Peligro' : 'Atención'}</p>
       <p><b>Cantidad:</b> {quantity}</p>
-      <p><b>Costo promedio:</b> {averageCost}</p>
+      <p><b>Costo:</b> {averageCost}</p>
       <p><b>Fecha de caducidad:</b> {expirationDate}</p>
       <p>
       <b>Bodega: </b>

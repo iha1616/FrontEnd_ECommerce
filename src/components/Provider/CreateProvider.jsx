@@ -60,7 +60,7 @@ async function checkEmailExistence(email) {
 
 const validationSchema = Yup.object().shape({
   nitCompany: Yup.string().min(8, 'Minimo 8 digitos').max(15, 'Maximo 15 digitos')
-    .required('Campo requerido')
+    .required('Campo requerido').matches(/^[0-9]+$/, 'El NIT debe contener solo números')
     .test('unique-NIT', 'El NIT ya se encuentra registrado', async function (value) {
       const response = await checkNITExistence(value);
       return !response.exists; // Devuelve false si el NIT ya existe

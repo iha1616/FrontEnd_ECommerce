@@ -8,7 +8,7 @@ import { ErrorMessage, Field, Form, Formik } from 'formik'
 import { toast } from 'react-toastify'
 
 const validationSchema = Yup.object().shape({
-  nitCompany: Yup.string().required('Campo requerido'),
+  nitCompany: Yup.string().required('Campo requerido').matches(/^[0-9]+$/, 'El NIT debe contener solo números'),
   nameCompany: Yup.string().required('Campo requerido'),
   email: Yup.string().required('Campo requerido'),
   phone: Yup.string().required('Campo requerido').matches(/^[0-9]+$/, 'El teléfono solo puede contener números'),

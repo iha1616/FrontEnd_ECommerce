@@ -72,3 +72,26 @@
     border-radius: 20px;
     padding: 10px;
 }
+
+.descripcion {
+    /* Establece un ancho máximo para evitar que el texto se extienda demasiado */
+    max-width: 100%;
+    /* Agrega un estilo para permitir saltos de línea */
+    white-space: pre-wrap;
+    /* Define un alto máximo si lo deseas */
+    max-height: 200px; /* Ajusta según tus necesidades */
+    /* Agrega scroll vertical si el contenido es muy largo */
+    overflow-y: auto; /* Cambia a 'scroll' si prefieres siempre mostrar la barra de desplazamiento */
+    /* Puedes agregar otros estilos según tu diseño */
+  }
+
+.card.form_compra {
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.sidebar .menu {
+    list-style: none;
+    padding-top: 20px;
+    margin-left: -30px;
+}

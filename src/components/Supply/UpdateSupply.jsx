@@ -10,8 +10,27 @@ import Error from '../Error/Error'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import { toast } from 'react-toastify'
 
+async function checkNameExistence(name) {
+  try {
+    const response = await clientAxios.get('/Supply');
+    const Supply = response.data;
+
+    // Verificar si el nombre ya existe en los insumos
+    const NameExist = Supply.some(supply => supply.name === name);
+
+    return { exists: NameExist };
+  } catch (error) {
+    console.error('Error al verificar la existencia del Nombre de los insumos:', error);
+    // Manejar el error adecuadamente en tu aplicación
+    return { exists: false };
+  }
+}
+
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required('Campo requerido'),
+  name: Yup.string().required('Campo requerido').test('unique-NAME', 'El insumo ya se encuentra registrado', async function (value) {
+    const response = await checkNameExistence(value);
+    return !response.exists; // Devuelve false si el nombre ya existe
+  }),
   dangerIndicators: Yup.string().required('Campo requerido'),
   useInstructions: Yup.string().required('Campo requerido'),
   advices: Yup.string().required('Campo requerido'),
@@ -310,7 +329,7 @@ function UpdateSupply() {
         </div>
         <div className="w-1/7">
           <label htmlFor="averageCost" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">
-            Costo promedio
+            Costo
           </label>
           <Field
             type="number"

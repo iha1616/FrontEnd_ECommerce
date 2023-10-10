@@ -17,7 +17,7 @@ const ReportSupply = ({ dataApi }) => {
     { key: 'supplyType', name: 'Tipo insumo' },
     { key: 'sortingWord', name: 'Tipo peligrosidad' },
     { key: 'quantity', name: 'Cantidad' },
-    { key: 'averageCost', name: 'Costo promedio' },
+    { key: 'averageCost', name: 'Costo' },
     { key: 'expirationDate', name: 'Fecha de caducidad' },
     { key: 'warehouseId', name: 'Bodega' },
     { key: 'statedAt', name: 'Estado' }

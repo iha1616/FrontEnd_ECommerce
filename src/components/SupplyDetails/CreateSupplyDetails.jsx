@@ -133,38 +133,54 @@ const CreateSupplyDetails = () => {
     fetchOptions()
   }, []);
 
+  
 
   const [insumos, setInsumos] = useState([]);
   const [jsonInsumos, setJsonInsumos] = useState([]);
   
+  const updateInsumos = (insumo) => {
+    const existingIndex = insumos.findIndex((item) => item.supplyId === insumo.supplyId);
+    
+    if (existingIndex !== -1) {
+      const updatedInsumos = [...insumos];
+      updatedInsumos[existingIndex].cantidad += insumo.cantidad;
+      setInsumos(updatedInsumos);
+    } else {
+      setInsumos([...insumos, insumo]);
+    }
+  };
+
 
   const handleSubmit = (event) => {
-    // event.preventDefault();
+  const selectInsumo = document.getElementById('insumo');
 
-    const selectInsumo = document.getElementById('insumo')
-    const insumo = {
-      supplyId: selectInsumo.value,
-      nombre: selectInsumo.options[selectInsumo.selectedIndex].text,
-      cantidad: document.getElementById('cantidad').value,
-      precio: document.getElementById('costo').value,
-    };
+  const insumo = {
+    supplyId: selectInsumo.value,
+    nombre: selectInsumo.options[selectInsumo.selectedIndex].text,
+    cantidad: parseInt(document.getElementById('cantidad').value),
+    precio: parseFloat(document.getElementById('costo').value),
+  };
 
+  updateInsumos(insumo);
+
+  
+  const existingIndex = datosJson.findIndex((item) => item.supplyId === insumo.supplyId);
+
+  if (existingIndex !== -1) {
+    
+    datosJson[existingIndex].quantity = parseInt(datosJson[existingIndex].quantity) + insumo.cantidad;
+  } else {
+    
     datosJson.push({
       supplyId: selectInsumo.value,
       supplyCost: document.getElementById('costo').value,
       quantity: document.getElementById('cantidad').value,
-    })
+    });
+  }
 
-console.log(datosJson)
-
-    setInsumos((insumos) => [...insumos, insumo]);
-    setJsonInsumos((jsonInsumos) => [...jsonInsumos, insumo]);
-
-    document.getElementById('insumo').value = ""
-    document.getElementById('cantidad').value = ""
-    document.getElementById('costo').value = ""
-
-  };
+  // console.log(datosJson);
+  
+};
 
   const handleDelete = (event) => {
     console.log(event)
@@ -188,13 +204,15 @@ console.log(datosJson)
       <td>{insumo.nombre}</td>
       <td>{insumo.cantidad}</td>
       <td>{insumo.precio}</td>
+      <td>$ {(insumo.precio * insumo.cantidad).toLocaleString('en-US')}</td>
       <td>
         <button type="button" className="btn btn-danger" onClick={handleDelete}>
             Eliminar
         </button>
       </td>
-      
+
     </tr>
+    
   ));
 
   useEffect(() => {
@@ -206,6 +224,10 @@ console.log(datosJson)
     // console.log(jsonInsumos)
   }, [insumos]);
 
+  const onCancel = () => {
+    // Redirige al usuario a la página de listar después de cancelar.
+    navigate('/supplyDetails'); // Asegúrate de reemplazar 'supplyDetails' con la ruta correcta de la lista.
+  };
   return (
     <Formik
     initialValues={{
@@ -230,6 +252,7 @@ console.log(datosJson)
 >
 <Form>
 
+
         <link
           href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
           rel="stylesheet"
@@ -240,7 +263,7 @@ console.log(datosJson)
           <p>Orden de compra</p>
           <div className="flex mb-4">
             <div className="w-1/2 mr-2">
-              <label htmlFor="entryDate">Fecha de entrada</label>
+              <label htmlFor="entryDate">Fecha de compra</label>
               <Field
                 name="entryDate"
                 type="date"
@@ -281,79 +304,111 @@ console.log(datosJson)
             {({ push, remove, form }) => (
               <div>
                 {form.values.supplies.map((supply, index) => (
-                  <div key={index}>
-                    <div className="form-group">
-                      <label htmlFor={`supplies[${index}].supplyId`}>Insumos</label>
-                      <Field
-                        as="select"
-                        name={`supplies[${index}].supplyId`}
-                        className="form-control"
-                        id="insumo"
-                      >
-                        <option value="">Selecciona los insumos</option>
-                        {supplyOptions.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </Field>
-                      <ErrorMessage
-                        name={`supplies[${index}].supplyId`}
-                        component="div"
-                        className="error"
-                      />
+                  
+                  <div key={index} className='row mt-3'>
+                    <div className="col-4">
+                      <div className="form-group">
+                        <label htmlFor={`supplies[${index}].supplyId`}>Insumos</label>
+                        <Field
+                          as="select"
+                          name={`supplies[${index}].supplyId`}
+                          className="form-control"
+                          id="insumo"
+                        >
+                          <option value="">Selecciona los insumos</option>
+                          {supplyOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </Field>
+                        <ErrorMessage
+                          name={`supplies[${index}].supplyId`}
+                          component="div"
+                          className="error"
+                        />
+                      </div>
                     </div>
-                    <div className="form-group">
-                      <label htmlFor={`supplies[${index}].supplyCost`}>Costo</label>
-                      <Field
-                        type="number"
-                        name={`supplies[${index}].supplyCost`}
-                        className="form-control"
-                        id="costo"
-                      />
-                      <ErrorMessage
-                        name={`supplies[${index}].supplyCost`}
-                        component="div"
-                        className="error"
-                      />
+                    <div className="col-4">
+                      <div className="form-group">
+                        <label htmlFor={`supplies[${index}].supplyCost`}>Costo</label>
+                        <Field
+                          type="number"
+                          name={`supplies[${index}].supplyCost`}
+                          className="form-control"
+                          id="costo"
+                        />
+                        <ErrorMessage
+                          name={`supplies[${index}].supplyCost`}
+                          component="div"
+                          className="error"
+                        />
+                      </div>
                     </div>
-                    <div className="form-group">
-                      <label htmlFor={`supplies[${index}].quantity`}>Cantidad</label>
-                      <Field
-                        type="number"
-                        name={`supplies[${index}].quantity`}
-                        className="form-control"
-                        id="cantidad"
-                      />
-                      <ErrorMessage
-                        name={`supplies[${index}].quantity`}
-                        component="div"
-                        className="error"
-                      />
+                    <div className="col-4">
+                      <div className="form-group mb-3">
+                        <label htmlFor={`supplies[${index}].quantity`}>Cantidad</label>
+                        <Field
+                          type="number"
+                          name={`supplies[${index}].quantity`}
+                          className="form-control"
+                          id="cantidad"
+                        />
+                        <ErrorMessage
+                          name={`supplies[${index}].quantity`}
+                          component="div"
+                          className="error"
+                        />
+                      </div>
                     </div>
+                    
                   </div>
                 ))}
-                <button type="button" onClick={handleSubmit} className="btn btn-primary">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <button type="button" onClick={handleSubmit} className="btn btn-primary mb-3">
                   Adicionar
                 </button>
-
+                <div>
+                  <b className='pl-2'>Valor Total: </b>
+                  {`$ ${insumos.map((insumo) => (insumo.precio * insumo.cantidad)).reduce((a, b) => a + b, 0).toLocaleString('en-US')}`}
+                </div>
+              </div>
               </div>
             )}
           </FieldArray>
-        </div>
-
-        <table className="table table-striped">
+          <table className="table table-striped">
           <thead>
             <tr>
               <th>ID</th>
               <th>Insumo</th>
               <th>Cantidad</th>
               <th>Precio</th>
+              <th>Subtotal</th>
               <th>Eliminar</th>
             </tr>
           </thead>
           <tbody>{tablaInsumos}</tbody>
-        </table>
+          </table>
+          <div className="flex justify-between mt-5 mb-3">
+          <button
+            type="submit"
+            className="text-white bg-custom-blue hover:bg-custom-blue-light focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-auto"
+            style={{ backgroundColor: '#3EABCF'}}
+          >
+            Crear Compra
+          </button>
+          <button
+            type="button"
+            className="btn btn-danger"
+            //style={{ backgroundColor: '#3EABCF' }}
+            onClick={onCancel}
+          >
+            Cancelar
+          </button>
+        </div>
+        </div>
+
+        
 
         
 
@@ -363,15 +418,10 @@ console.log(datosJson)
           integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
           crossorigin="anonymous"
         ></script>
-        <button
-          type="submit"
-          className="text-black bg-custom-blue hover:bg-custom-blue-lighter focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-auto mb-5"
-          style={{ backgroundColor: '#3EABCF' }}
-        >
-          Crear Compra
-        </button>
+        
       </Form>
     </Formik>
+    
   );
 };
 

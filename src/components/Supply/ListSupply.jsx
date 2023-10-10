@@ -65,7 +65,7 @@ const ListSupply = () => {
   )
 },
   { Header: 'Cantidad', accessor: 'quantity' },
-  { Header: 'Costo promedio', accessor: 'averageCost' },
+  { Header: 'Costo', accessor: 'averageCost' },
   { Header: 'Fecha de caducidad', accessor: 'expirationDate' },
     {
       Header: 'Estado',
